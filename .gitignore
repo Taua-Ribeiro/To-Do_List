@@ -1,0 +1,4 @@
+.venv/
+TODO.txt
+__pycache__
+.python-version
