@@ -1,16 +1,22 @@
 import sqlite3
 
-def conectar() -> sqlite3.Connection:
+class ConexaoTeste:
     """
-    Retorna um objeto do tipo Connection do banco de dados criado em memória para testes.
+    Classe responsável por realizar a conexão com o banco de dados de testes.
     """
 
-    try:
+    @staticmethod
+    def conectar() -> sqlite3.Connection:
+        """
+        Retorna um objeto do tipo Connection do banco de dados criado em memória para testes.
+        """
 
-        conexao = sqlite3.connect(":memory:")
+        try:
 
-        conexao.cursor().execute("PRAGMA foreign_keys = ON")
+            conexao = sqlite3.connect(":memory:")
 
-        return conexao
-    except Exception as e:
-        print("Erro ao conectar ao banco de testes: ", e)
+            conexao.cursor().execute("PRAGMA foreign_keys = ON")
+
+            return conexao
+        except Exception as e:
+            print("Erro ao conectar ao banco de testes: ", e)
