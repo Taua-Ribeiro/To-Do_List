@@ -1,5 +1,6 @@
 import sqlite3
-
+from src.config.tables_config import TABLES_SCRIPTS
+import os
 class ConexaoProducao:
     """
     Classe resposável por fazer a conexão com o banco de dados de produção.
@@ -12,12 +13,15 @@ class ConexaoProducao:
         Conecta ao banco de dados e retorna um objeto do tipo Connection
         """
 
-        try:
 
-            conexao = sqlite3.connect("../database.db")
+        conexao = sqlite3.connect("database.db")
 
-            conexao.cursor().execute("PRAGMA foreign_keys = ON")
+        conexao.execute("PRAGMA foreign_keys = ON")
 
-            return conexao
-        except Exception as e:
-            print("Um erro ocorreu: ", e)
+
+        for SCRIPT in TABLES_SCRIPTS:
+            conexao.executemany(SCRIPT)
+
+        conexao.commit()
+
+        return conexao
