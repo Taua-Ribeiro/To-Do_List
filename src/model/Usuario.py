@@ -1,5 +1,5 @@
 import re
-
+from uuid import uuid4, UUID
 
 class Usuario:
     def __init__(self, nome: str, email: str, senha: str):
@@ -17,6 +17,7 @@ class Usuario:
         if len(erros):
             raise ExceptionGroup("Erro de validação", erros)
         
+        self._id = uuid4()
         self._nome = nome.strip()
         self._email = email.strip().lower()
         self._senha = senha
@@ -52,4 +53,7 @@ class Usuario:
         if len(senha) < 8:
             raise ValueError("A senha deve ter no mínimo 8 caracteres")
     
-        
+    @property
+    def id(self) -> UUID:
+        return self._id
+    
