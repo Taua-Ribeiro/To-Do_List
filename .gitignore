@@ -2,3 +2,4 @@
 TODO.txt
 __pycache__
 .python-version
+*.db
