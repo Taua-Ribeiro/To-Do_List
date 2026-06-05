@@ -2,7 +2,7 @@ import re
 from uuid import uuid4, UUID
 
 class Usuario:
-    def __init__(self, nome: str, email: str, senha: str):
+    def __init__(self, nome: str, email: str, senha: str, id: str| UUID= None):
         erros = []
 
         if len(nome.strip()) < 3:
@@ -16,8 +16,12 @@ class Usuario:
         
         if len(erros):
             raise ExceptionGroup("Erro de validação", erros)
-        
-        self._id = uuid4()
+
+        if id:
+            self._id = UUID(id)
+        else:
+            self._id = uuid4()
+
         self._nome = nome.strip()
         self._email = email.strip().lower()
         self._senha = senha
@@ -55,5 +59,12 @@ class Usuario:
     
     @property
     def id(self) -> UUID:
-        return self._id
+        return self._id      
+
+    def __eq__(self, other):
+        return self._id == other._id
+    
+    def __repr__(self):
+        return f'(id: {str(self._id)}, nome: {self._nome}, email: {self.email})'
+
     
