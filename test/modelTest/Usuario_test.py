@@ -1,7 +1,6 @@
 from src.model.Usuario import Usuario
 from faker import Faker
 import pytest
-from uuid import UUID
 
 moker = Faker()
 
@@ -10,13 +9,13 @@ moker = Faker()
 def test_sucesso(nome, email, senha):
     usuario = Usuario(nome, email, senha)
 
-    assert isinstance(usuario, Usuario) and isinstance(usuario.id, UUID)
+    assert isinstance(usuario, Usuario) and isinstance(usuario.id, str)
 
 @pytest.mark.parametrize("nome,email,senha",[
     ("Ab", moker.email(), moker.password()),
     ("            Ab               ", moker.email(), moker.password()),
     ("", moker.email(), moker.password()),
-    ("Teste", moker.email(), moker.password()),
+    ("T                  ", moker.email(), moker.password()),
 ])
 def test_fail_nome(nome, email, senha):
     with pytest.raises((ExceptionGroup, ValueError)):
