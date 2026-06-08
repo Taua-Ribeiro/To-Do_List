@@ -2,6 +2,7 @@ from src.model.Usuario import Usuario
 from src.config.db_config import conectar
 from datetime import datetime
 from uuid import uuid4
+from sqlite3 import DataError
 
 class UsuarioRepository:
     _eTeste = False
@@ -16,7 +17,6 @@ class UsuarioRepository:
             with conectar(cls._eTeste) as con:
                 cursor = con.cursor()
 
-                
                 cursor.execute("INSERT INTO Usuario(id, nome, email, senha) VALUES(?,?,?,?)", (str(usuario.id), usuario.nome, usuario.email, usuario.senha))
                 
                 con.commit()
@@ -31,16 +31,18 @@ class UsuarioRepository:
                 cursor = con.cursor()
                 if email:
                     res = cursor.execute("SELECT id, nome, senha FROM Usuario WHERE (email = ?);", (email,))
-                    id, nome, senha = res.fetchone()
+                    resultado = res.fetchone()
+                    if resultado:
+                        id, nome, senha = resultado
 
-                    return Usuario(nome, email, senha, id= id)
+                        #print(repr(Usuario(nome, email, senha, id)))
+                        return Usuario(nome, email, senha, id)
+                    else: 
+                        raise DataError("Usuário não encontrado")
                 
                 res = cursor.execute("SELECT id, nome, email, senha FROM Usuario")
-
-                # cursor.execute("DELETE FROM Usuario;")
-                print(cursor.execute("SELECT count(*) AS numero_linhas FROM Usuario;").fetchall())
                 
-                resultado = list(map(lambda tuple: Usuario(tuple[1], tuple[2], tuple[3], id= tuple[0]), res.fetchall()))
+                resultado = list(map(lambda tuple: Usuario(tuple[1], tuple[2], tuple[3], tuple[0]), res.fetchall()))
 
                 return resultado
             except Exception as erro:
@@ -53,21 +55,23 @@ class UsuarioRepository:
             try:
                 cursor = con.cursor()
 
-                res = cursor.execute("SELECT senhaFROM Usuario WHERE (id = ?)",(usuario_editado.id))
+                # print(len(usuario_editado.id))
+                res = cursor.execute("SELECT senha FROM Usuario WHERE (id = ?);",(usuario_editado.id,))
 
                 senha_antiga = res.fetchone()[0]
 
+                # print(senha_antiga)
                 cursor.execute("""
-                            UPDATE USUARIO SET(
-                            nome = ?, 
+                            UPDATE Usuario SET
+                            nome = ?,
                             email = ?, 
                             senha = ?, 
-                            atualizado_em = ?),
+                            atualizado_em = ?
                             WHERE (id = ?);
-                            """, (usuario_editado.nome, usuario_editado.email, usuario_editado.senha, datetime.now(), usuario_editado.id))
+                            """, (usuario_editado.nome, usuario_editado.email, usuario_editado.senha, datetime.now().isoformat(sep=" "), usuario_editado.id))
                 
                 if senha_antiga != usuario_editado.senha:
-                    cursor.execute("INSERT INTO Senhas_Usuario(id, id_usuario, ultima_senha) VALUES(?,?,?)", (str(uuid4()), str(usuario_editado.id), senha_antiga))
+                    cursor.execute("INSERT INTO Senhas_Usuario(id, id_usuario, ultima_senha) VALUES(?,?,?)", (str(uuid4()), usuario_editado.id, senha_antiga))
 
                 con.commit()
             except Exception as erro:
@@ -80,12 +84,23 @@ class UsuarioRepository:
             try:
                 cursor = con.cursor()
 
-                cursor.execute("DELETE FROM Usuario WHERE (id = ?)", (usuario.id))
+                cursor.execute("DELETE FROM Usuario WHERE (id = ?)", (usuario.id,))
 
                 con.commit()
             except Exception as erro:
                 con.rollback()
                 raise(erro)
 
-    
+    @classmethod
+    def find_ultimas_senhas(cls, usuario: Usuario) -> list:
+        with conectar(cls._eTeste) as con:
+            cursor = con.cursor()
+
+            res = cursor.execute("""
+                                 SELECT ultima_senha FROM Senhas_Usuario 
+                                 WHERE(id_usuario = ?)  
+                                 ORDER BY ultima_senha DESC
+                                 LIMIT 5;""", (usuario.id,))
+
+            return list(map(lambda i: i[0], res.fetchall()))
         
