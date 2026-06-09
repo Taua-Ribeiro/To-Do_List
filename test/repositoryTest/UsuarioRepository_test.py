@@ -4,7 +4,7 @@ import pytest
 from faker import Faker
 from src.config.db_config import conectar
 from src.scripts.clear_scripts import CLEAR_SCRIPTS
-from sqlite3 import DataError
+from src.model.DataError import DataError
 
     
 moker = Faker()
@@ -98,27 +98,6 @@ def test_delete(lista_teste):
                 UsuarioRepository.remover_usuario(linha)
 
                 UsuarioRepository.find_usuario(linha.email)
-    finally:
-        clear_data()
-
-@pytest.mark.parametrize("usuario,numero_mudancas", [(Usuario(moker.name(), moker.email(), moker.password()), i) for i in range(1,7)])
-def test_mudar_senha(usuario: Usuario, numero_mudancas: int):
-    try:
-        UsuarioRepository.utilizar_conexao_teste()
-
-        UsuarioRepository.cadastrar_usuario(usuario)
-
-        mudancas = []
-
-        for _ in range(0, numero_mudancas):
-            mudancas.append(usuario.senha)
-            usuario.senha = moker.password()
-            UsuarioRepository.editar_usuario(usuario)
-        
-        resultado_db = UsuarioRepository.find_ultimas_senhas(usuario)
-
-        for linha in resultado_db:
-            assert linha in mudancas
     finally:
         clear_data()
 

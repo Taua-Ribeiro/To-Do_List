@@ -1,8 +1,7 @@
 from src.model.Usuario import Usuario
 from src.config.db_config import conectar
 from datetime import datetime
-from uuid import uuid4
-from sqlite3 import DataError
+from src.model.DataError import DataError
 
 class UsuarioRepository:
     _eTeste = False
@@ -55,12 +54,6 @@ class UsuarioRepository:
             try:
                 cursor = con.cursor()
 
-                # print(len(usuario_editado.id))
-                res = cursor.execute("SELECT senha FROM Usuario WHERE (id = ?);",(usuario_editado.id,))
-
-                senha_antiga = res.fetchone()[0]
-
-                # print(senha_antiga)
                 cursor.execute("""
                             UPDATE Usuario SET
                             nome = ?,
@@ -70,9 +63,6 @@ class UsuarioRepository:
                             WHERE (id = ?);
                             """, (usuario_editado.nome, usuario_editado.email, usuario_editado.senha, datetime.now().isoformat(sep=" "), usuario_editado.id))
                 
-                if senha_antiga != usuario_editado.senha:
-                    cursor.execute("INSERT INTO Senhas_Usuario(id, id_usuario, ultima_senha) VALUES(?,?,?)", (str(uuid4()), usuario_editado.id, senha_antiga))
-
                 con.commit()
             except Exception as erro:
                 con.rollback()
@@ -92,17 +82,3 @@ class UsuarioRepository:
             except Exception as erro:
                 con.rollback()
                 raise(erro)
-
-    @classmethod
-    def find_ultimas_senhas(cls, usuario: Usuario) -> list:
-        with conectar(cls._eTeste) as con:
-            cursor = con.cursor()
-
-            res = cursor.execute("""
-                                 SELECT ultima_senha FROM Senhas_Usuario 
-                                 WHERE(id_usuario = ?)  
-                                 ORDER BY ultima_senha DESC
-                                 LIMIT 5;""", (usuario.id,))
-
-            return list(map(lambda i: i[0], res.fetchall()))
-        

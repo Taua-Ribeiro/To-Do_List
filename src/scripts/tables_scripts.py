@@ -13,15 +13,6 @@ CREATE TABLE IF NOT EXISTS Usuario(
 );
 """,
 """
-CREATE TABLE IF NOT EXISTS Senhas_Usuario(
-    id TEXT PRIMARY KEY,
-    id_usuario TEXT NOT NULL,
-    ultima_senha TEXT NOT NULL,
-    data_alteracao TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
-);
-""",
-"""
 CREATE TABLE IF NOT EXISTS Tarefa(
     id TEXT PRIMARY KEY,
     id_usuario TEXT NOT NULL,
@@ -35,13 +26,5 @@ CREATE TABLE IF NOT EXISTS Tarefa(
     criado_em TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id)
 );
-""",
 """
-CREATE TABLE IF NOT EXISTS Status_Tarefa(
-    id TEXT PRIMARY KEY,
-    id_tarefa TEXT NOT NULL,
-    ultimo_status TEXT NOT NULL,
-    data_alteracao TEXT DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_tarefa) REFERENCES Tarefa(id)
-);
-"""]
+]
