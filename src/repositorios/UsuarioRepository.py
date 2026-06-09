@@ -84,8 +84,10 @@ class UsuarioRepository:
             try:
                 cursor = con.cursor()
 
-                cursor.execute("DELETE FROM Usuario WHERE (id = ?)", (usuario.id,))
+                res = cursor.execute("DELETE FROM Usuario WHERE (id = ?)", (usuario.id,))
 
+                if len(res.fetchall()) == 0:
+                    raise DataError("Usuário não encontrado")
                 con.commit()
             except Exception as erro:
                 con.rollback()
