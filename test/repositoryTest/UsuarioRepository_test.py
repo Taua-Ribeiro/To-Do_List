@@ -121,3 +121,29 @@ def test_mudar_senha(usuario: Usuario, numero_mudancas: int):
             assert linha in mudancas
     finally:
         clear_data()
+
+@pytest.mark.parametrize("lista_cadastro,email_test", [(TEST_CASE, moker.email())])
+def test_fail_find_one(lista_cadastro, email_test):
+    try:
+        with pytest.raises(DataError):
+            UsuarioRepository.utilizar_conexao_teste()
+
+            for usuario in lista_cadastro:
+                UsuarioRepository.cadastrar_usuario(usuario)
+            
+            UsuarioRepository.find_usuario(email_test)
+    finally:     
+        clear_data()
+
+@pytest.mark.parametrize("lista_cadastro, usuario_test", [(TEST_CASE, Usuario(moker.name(), moker.email(), moker.password()))])
+def test_fail_delete(lista_cadastro, usuario_test):
+    try:
+        with pytest.raises(DataError):
+            UsuarioRepository.utilizar_conexao_teste()
+
+            for usuario in lista_cadastro:
+                UsuarioRepository.cadastrar_usuario(usuario)
+            
+            UsuarioRepository.remover_usuario(usuario_test)
+    finally:
+        clear_data()
