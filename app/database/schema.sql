@@ -1,0 +1,17 @@
+DROP TABLE IF EXISTS Tarefas;
+DROP TABLE IF EXISTS Usuarios;
+
+CREATE IF NOT EXISTS Tarefas(
+    id INT PRIMARY KEY AUTOINCREMENT,
+    id_usuario INT NOT NULL,
+    titulo TEXT NOT NULL,
+    descricao TEXT,
+    criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    concluido_em TIMESTAMP
+);
+
+CREATE IF NOT EXISTS Usuarios(
+    id INT PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL UNIQUE,
+    hash_senha TEXT NOT NULL
+);
