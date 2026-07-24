@@ -22,9 +22,13 @@ def create_app(config_test= None):
         app.config.from_mapping(config_test)
 
     os.makedirs('instance', exist_ok= True)
-    
+
     @app.route('/')
     def ola_mundo():
         return 'Olá Mundo'
+
+    from .database import init_app
+
+    init_app(app)
 
     return app
