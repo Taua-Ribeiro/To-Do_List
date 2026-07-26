@@ -6,7 +6,7 @@ CREATE IF NOT EXISTS Tarefas(
     id_usuario INT NOT NULL,
     titulo TEXT NOT NULL,
     descricao TEXT,
-    criada_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    criada_em DATE DEFAULT CURRENT_TIMESTAMP,
     concluido_em TIMESTAMP
 );
 

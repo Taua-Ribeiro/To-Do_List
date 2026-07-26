@@ -8,7 +8,7 @@ from flask import g, current_app, Flask
 import click
 
 from contextlib import contextmanager
-from typing import Iterator
+from typing import Generator, Any
 
 def get_engine() -> Engine:
     """Função responsável por obter a engine do `SQLAlchemy`. Caso :obj:`g` não tenha a instância do objeto :class:`Engine` ela será adicionada ao `g`.
@@ -33,7 +33,7 @@ def remove_engine(e: Exception|None= None):
     g.pop("engine", None)
 
 @contextmanager
-def get_session() -> Iterator[Session]:
+def get_session() -> Generator[Session, Any, None]:
     """Função responsável por obter a conexão da ORM do `SQLAlchemy`. Sua forma de uso segue a seguinte forma 
     ```python
         with get_session() as session:
@@ -41,7 +41,7 @@ def get_session() -> Iterator[Session]:
     ```.
 
     Yields:
-        session (Iterator[Session]): Iterador a ser utilizado com o `with` para ter uma conexão com banco de dados.
+        session (Generator[Connection, Any, None]): Gerador a ser utilizado com o `with` para ter uma conexão com banco de dados.
     """
     try:
         yield Session(get_engine())
@@ -49,12 +49,15 @@ def get_session() -> Iterator[Session]:
         pass
 
 @contextmanager
-def get_connection() -> Iterator[Connection]:
+def get_connection() -> Generator[Connection, Any, None]:
     """Função responsável por obter a conexão do `SQLAlchemy`. Ele é utilizado para execcutar scripts SQL direito e sua forma de uso é:
     ```python
     with get_connection() as conn:
         # Código
     
+    Yields:
+        connection (Generator[Connection, Any, None]): Gerador a ser utilizado com o `with` para ter uma conexão mais direta com o banco
+        de dados.
     ```
     """
     try:
