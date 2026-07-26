@@ -1,5 +1,3 @@
-import pytest
-
 def test_cli_command(runner, monkeypatch):
     class Gravador(object):
         foiChamado = False
