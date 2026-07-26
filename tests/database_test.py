@@ -24,10 +24,10 @@ def test_loaded_data(app):
             SELECT * FROM Usuarios;
             """)).fetchone()
 
-            assert "test" in result_usuarios
+            assert "teste" in result_usuarios
 
             qtd_tarefas = conn.execute(text("""
             SELECT COUNT(id) FROM Tarefas;
             """)).fetchone()
 
-            assert qtd_tarefas == 2
+            assert qtd_tarefas == (2,)
