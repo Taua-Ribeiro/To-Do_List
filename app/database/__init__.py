@@ -1,6 +1,12 @@
 """Módulo responsável por conter as funções, models e schemas utilizados para a criação do banco de dados.
 """
-from sqlalchemy import create_engine, Engine, Connection, text
+from sqlalchemy import (
+    create_engine,
+    Engine,
+    Connection,
+    text,
+)
+
 from sqlalchemy.orm import Session
 
 from flask import g, current_app, Flask
@@ -10,7 +16,7 @@ import click
 from contextlib import contextmanager
 from typing import Generator, Any
 
-def get_engine() -> Engine:
+def _get_engine() -> Engine:
     """Função responsável por obter a engine do `SQLAlchemy`. Caso :obj:`g` não tenha a instância do objeto :class:`Engine` ela será adicionada ao `g`.
     Essa função não deve ser usada diretamente. Somente através de :func:`get_session` e :func:`get_connection`.
 
@@ -44,7 +50,9 @@ def get_session() -> Generator[Session, Any, None]:
         session (Generator[Connection, Any, None]): Gerador a ser utilizado com o `with` para ter uma conexão com banco de dados.
     """
     try:
-        yield Session(get_engine())
+        engine = _get_engine()
+        
+        yield Session(engine)
     finally:
         pass
 
@@ -54,27 +62,31 @@ def get_connection() -> Generator[Connection, Any, None]:
     ```python
     with get_connection() as conn:
         # Código
-    
+    ```
+
     Yields:
         connection (Generator[Connection, Any, None]): Gerador a ser utilizado com o `with` para ter uma conexão mais direta com o banco
         de dados.
-    ```
+    
     """
     try:
-        engine = get_engine()
+        engine = _get_engine()
 
         yield engine.connect()
-
-    except:
-        pass
+    except Exception as e:
+        raise(e)
 
 def init_database():
     """Função responsável por inicializar o banco de dados da aplicação. Ela não deve ser usada diretamente,
     ela será utilizada através da função :func:`init_db_cli`
     """
     with current_app.open_resource("./database/schema.sql", "r", "utf-8") as schema:
-        with get_connection() as conn:
-            conn.execute(text(schema.read()))
+        statements = [stmt.strip() for stmt in schema.read().split(";") if stmt.strip()]
+
+    with get_connection() as conn:
+        for statement in statements:
+            conn.execute(text(statement))
+        conn.commit()
 
 @click.command('init-database')
 def init_database_cli():
@@ -86,7 +98,6 @@ def init_database_cli():
     init_database()
 
     click.echo("Banco de dados inicializado.")
-    pass
 
 def init_app(app: Flask):
     """Função responsável por inicializar o app. Ela adiciona o :func:`remove_engine` como comando de destruidor de contexto
@@ -95,6 +106,7 @@ def init_app(app: Flask):
     Params:
         app (:class:`Flask`): Instância da aplicação flask.
     """
-    app.teardown_appcontext(remove_engine)
 
+    app.teardown_appcontext(remove_engine)
     app.cli.add_command(init_database_cli)
+
