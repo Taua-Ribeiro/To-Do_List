@@ -105,10 +105,11 @@ def init_database_cli():
 def load_tables(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
-        engine = _get_engine()
+        with current_app.app_context():
+            engine = _get_engine()
 
-        Table("Usuarios", MetaData(), autoload_with= engine)
-        Table("Tarefas", MetaData(), autoload_with=engine)
+            Table("Usuarios", MetaData(), autoload_with= engine)
+            Table("Tarefas", MetaData(), autoload_with=engine)
 
         return engine
 
