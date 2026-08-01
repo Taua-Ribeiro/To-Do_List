@@ -5,8 +5,7 @@ from sqlalchemy import (
     Engine,
     Connection,
     text,
-    MetaData,
-    Table
+    MetaData
 )
 
 from sqlalchemy.orm import Session
@@ -16,8 +15,10 @@ from flask import g, current_app, Flask
 import click
 
 from contextlib import contextmanager
-from typing import Generator, Any, Callable
-from functools import wraps
+from typing import Generator, Any
+
+
+metadata_obj = MetaData()
 
 def _get_engine() -> Engine:
     """Função responsável por obter a engine do `SQLAlchemy`. Caso :obj:`g` não tenha a instância do objeto :class:`Engine` ela será adicionada ao `g`.
@@ -27,7 +28,7 @@ def _get_engine() -> Engine:
         engine (Engine): Instância do objeto `Engine` que permite criar o objeto de Session para comunicação com o banco de dados.
     """
     if 'engine' not in g:
-        g.engine = create_engine(f'sqlite+pysqlite:///{current_app.config["DATABASE"]}', echo=True)
+        g.engine = create_engine(f'sqlite+pysqlite:///{current_app.config["DATABASE"]}', echo=False)
 
     return g.engine
 
@@ -54,7 +55,6 @@ def get_session() -> Generator[Session, Any, None]:
     """
     try:
         engine = _get_engine()
-        
         yield Session(engine)
     finally:
         pass
@@ -101,21 +101,6 @@ def init_database_cli():
     init_database()
 
     click.echo("Banco de dados inicializado.")
-
-def load_tables(func: Callable) -> Callable:
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        with current_app.app_context():
-            engine = _get_engine()
-
-            Table("Usuarios", MetaData(), autoload_with= engine)
-            Table("Tarefas", MetaData(), autoload_with=engine)
-
-        return engine
-
-
-    return wrapper
-
 
 def init_app(app: Flask):
     """Função responsável por inicializar o app. Ela adiciona o :func:`remove_engine` como comando de destruidor de contexto
