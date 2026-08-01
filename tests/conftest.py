@@ -32,7 +32,10 @@ def app() -> Flask:
     with app.app_context():
         with get_connection() as conn:
             init_database()
-            conn.execute(text(_script_sql))
+            statements = [stmt.strip() for stmt in _script_sql.split(";") if stmt.strip()]
+            for statement in statements:
+                conn.execute(text(statement))
+            conn.commit()
 
     yield app
 
