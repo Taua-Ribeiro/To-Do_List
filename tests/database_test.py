@@ -1,9 +1,18 @@
 from app.database import get_session, get_connection
+from app.database.models import Usuarios
 
 from flask import g
 
 import sqlalchemy as db
 from sqlalchemy.orm import Session
+from sqlalchemy import text, select
+from sqlalchemy.exc import OperationalError
+
+from app import create_app
+
+import pytest
+
+from app.utils.app_exceptions import DatabaseException
 
 def test_cli_command(runner, monkeypatch):
     class Gravador(object):
@@ -22,9 +31,6 @@ def test_cli_command(runner, monkeypatch):
     assert Gravador.foiChamado
 
 def test_loaded_data(app):
-    from app.database import get_connection
-    from sqlalchemy import text
-
     with app.app_context():
         with get_connection() as conn:
             result_usuarios = conn.execute(text("""
@@ -52,3 +58,15 @@ def test_get_connection(app):
             assert type(g.engine) is db.Engine
 
             assert type(conn) is db.Connection
+
+def test_database_not_initicialized():
+    test_app = create_app({"TESTING": True})
+
+    with pytest.raises(DatabaseException, check= lambda e: type(e.original_error) == OperationalError) as info:
+        with test_app.app_context():
+            with get_session():
+
+                print("Código qualquer")
+
+    assert info.type is DatabaseException
+    assert "Banco de dados não inicializado!" in info.value.args[0]
