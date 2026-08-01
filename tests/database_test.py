@@ -1,3 +1,10 @@
+from app.database import get_session, get_connection
+
+from flask import g
+
+import sqlalchemy as db
+from sqlalchemy.orm import Session
+
 def test_cli_command(runner, monkeypatch):
     class Gravador(object):
         foiChamado = False
@@ -31,3 +38,17 @@ def test_loaded_data(app):
             """)).fetchone()
 
             assert qtd_tarefas == (2,)
+
+def test_get_session(app):
+    with app.app_context():
+        with get_session() as session:
+            assert type(g.engine) is db.Engine
+
+            assert type(session) is  Session
+
+def test_get_connection(app):
+    with app.app_context():
+        with get_connection() as conn:
+            assert type(g.engine) is db.Engine
+
+            assert type(conn) is db.Connection
