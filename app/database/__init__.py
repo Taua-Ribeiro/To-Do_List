@@ -7,6 +7,7 @@ from sqlalchemy import (
     text,
     MetaData
 )
+from sqlalchemy.exc import OperationalError
 
 from sqlalchemy.orm import Session
 
@@ -55,7 +56,22 @@ def get_session() -> Generator[Session, Any, None]:
     """
     try:
         engine = _get_engine()
+        session = Session(engine)
+
+        print("Chamou session")
+        with session as s:
+            from app.database.models import Usuarios, Tarefas
+            from sqlalchemy import select
+
+            print("Passou!!")
+            s.execute(select(Usuarios))
+            s.execute(select(Tarefas))
+        
         yield Session(engine)
+    except OperationalError as error:
+        from app.utils.app_exceptions import DatabaseException
+
+        raise DatabaseException("Banco de dados não inicializado! Por favor inicialize com: flask init-database", error)
     finally:
         pass
 
