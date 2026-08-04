@@ -29,7 +29,7 @@ def _get_engine() -> Engine:
         engine (Engine): Instância do objeto `Engine` que permite criar o objeto de Session para comunicação com o banco de dados.
     """
     if 'engine' not in g:
-        g.engine = create_engine(f'sqlite+pysqlite:///{current_app.config["DATABASE"]}', echo=False)
+        g.engine = create_engine(f'sqlite+pysqlite:///{current_app.config["DATABASE"]}', echo=True)
 
     return g.engine
 
@@ -58,19 +58,17 @@ def get_session() -> Generator[Session, Any, None]:
         engine = _get_engine()
         session = Session(engine)
 
-        print("Chamou session")
         with session as s:
             from app.database.models import Usuarios, Tarefas
             from sqlalchemy import select
 
-            print("Passou!!")
             s.execute(select(Usuarios))
             s.execute(select(Tarefas))
         
         yield Session(engine)
     except OperationalError as error:
         from app.utils.app_exceptions import DatabaseException
-
+        
         raise DatabaseException("Banco de dados não inicializado! Por favor inicialize com: flask init-database", error)
     finally:
         pass

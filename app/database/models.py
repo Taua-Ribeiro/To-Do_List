@@ -33,6 +33,5 @@ class Tarefas(Base):
     id_usuario: Mapped[int] = mapped_column(ForeignKey("Usuarios.id"), nullable= False)
     titulo: Mapped[str] = mapped_column(nullable= False)
     descricao: Mapped[str | None] = mapped_column(nullable= True)
-    created_at: Mapped[timestamp]
-    concluida_em: Mapped[timestamp | None]
+    concluido_em: Mapped[timestamp | None]
 
