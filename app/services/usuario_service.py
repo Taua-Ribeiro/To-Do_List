@@ -28,6 +28,8 @@ def get_one_usuario(nome: str) -> Usuarios:
 
         if usuario is None:
             raise ServiceException('Usuário não encontrado.')
+
+        return usuario
         
 
 def update_usuario():
