@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+    <div class="login">
+        <form method="post">
+            <label for="login">
+                <span>Login</span>
+            </label>
+            <input type="text" name="login" id="login" placeholder="Digite o nome do usuário" required>
+    
+            <label for="senha">
+                <span>Senha</span>
+                <input type="password" name="senha" id="senha" placeholder="Digite a senha" required>
+            </label>
+
+            <label for="confirmacao">
+                <span>Confirme a senha</span>
+                <input type="password" name="confirmacao" id="confirmacao" placeholder="Confirme a senha" required>
+            </label>
+    
+            <input type="submit" value="Registrar">
+        </form>
+
+        <p>Não tem uma conta? <a href="{{ url_for('auth.register')}}">Se registre</a></p>
+    </div>
+{% endblock %}
