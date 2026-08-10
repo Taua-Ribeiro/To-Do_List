@@ -29,27 +29,27 @@ def requer_login(view):
 
 @bp.before_app_request
 def carregar_usuario_logado():
-    id_usuario = session.id_usuario
+    id_usuario = session.get("id_usuario")
 
     if id_usuario is None:
         g.usuario = None
     else:
         from app.database.models import Usuarios
-        with get_session() as session:
+        with get_session() as sess:
             stmt = select(Usuarios).where(Usuarios.id == id_usuario)
 
-            g.usuario = session.scalars(stmt).one()
+            g.usuario = sess.scalars(stmt).one()
 
 @bp.route('/register', methods=['GET', 'POST'])
-def resgister():
+def register():
     method = request.method
+    error = []
 
     if method == 'POST':
         login = request.form["login"]
         senha = request.form["senha"]
         confirmacao = request.form["confirmacao"]
 
-        error = []
 
         if login is None:
             error.append("Login é necessário!")
@@ -72,4 +72,4 @@ def resgister():
     elif method != "GET":
         return abort(405, f'Método {method} não é permitido!')
     
-    return render_template('auth/templates/register.html', error=error)
+    return render_template('auth/register.html', error=error)
