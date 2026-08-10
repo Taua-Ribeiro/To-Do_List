@@ -28,7 +28,9 @@ def create_app(config_test= None):
         return 'Olá Mundo'
 
     from .database import init_app
+    from .auth import bp
 
     init_app(app)
+    app.register_blueprint(bp)
 
     return app
