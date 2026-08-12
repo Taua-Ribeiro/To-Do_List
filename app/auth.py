@@ -46,14 +46,14 @@ def register():
     error = []
 
     if method == 'POST':
-        login = request.form["login"]
-        senha = request.form["senha"]
-        confirmacao = request.form["confirmacao"]
+        login = request.form["login"].strip()
+        senha = request.form["senha"].strip()
+        confirmacao = request.form["confirmacao"].strip()
 
-        if login is None:
+        if not login:
             error.append("Login é necessário!")
 
-        if senha is None:
+        if not senha:
             error.append("Senha é necessária!")
 
         if len(senha) < 4:
