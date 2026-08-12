@@ -50,7 +50,6 @@ def register():
         senha = request.form["senha"]
         confirmacao = request.form["confirmacao"]
 
-
         if login is None:
             error.append("Login é necessário!")
 
@@ -63,13 +62,18 @@ def register():
         if senha != confirmacao:
             error.append("A senha não é igual à confirmação da senha!")
 
-        if len(error) > 0:
+        if len(error) == 0:
             create_usuario(login, senha)
 
-            flash("Usuário creado com sucesso!", "sucesso")
+            flash("Usuário criado com sucesso!", "sucesso")
 
             return redirect(url_for('auth.login'))
     elif method != "GET":
         return abort(405, f'Método {method} não é permitido!')
-    
+
+    print(error)
     return render_template('auth/register.html', error=error)
+
+@bp.route("/login", methods=["GET", "POST"])
+def login():
+    return "Funcionou"
