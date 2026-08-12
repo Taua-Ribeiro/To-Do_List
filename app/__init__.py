@@ -11,10 +11,10 @@ def create_app(config_test= None):
     """
     app = Flask(__name__, instance_relative_config= True)
 
-    app.config.from_mapping({
-        "DATABASE": os.path.join(app.instance_path, "database.sqlite"),
-        "SECRET": "DEV"
-    })
+    app.config.from_mapping(
+        DATABASE = os.path.join(app.instance_path, "database.sqlite"),
+        SECRET_KEY = "DEV"
+    )
 
     if config_test is None:
         app.config.from_pyfile("config.py", silent= True)
