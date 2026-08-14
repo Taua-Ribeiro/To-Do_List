@@ -16,6 +16,14 @@
             <div class="flash">{{ message }}</div>
         {% endfor %}
 
+        {% if error%}
+        <ul class="error-container">
+            {% for e in error%}
+                <li class="error">⛔ {{ e }}</li>
+            {% endfor %}
+        </ul>
+    {% endif%}
+
         {% block conteudo %}{% endblock %}
     </body>
 </html>
