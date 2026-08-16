@@ -23,7 +23,7 @@ from sqlalchemy import select
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-def requer_login(view):
+def require_login(view):
     @functools.wraps(view)
     def wrapper(**kwargs):
         return redirect('auth.login') if g.usuario is None else view(**kwargs)
