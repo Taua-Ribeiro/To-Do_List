@@ -59,14 +59,27 @@ def test_get_connection(app):
 
             assert type(conn) is db.Connection
 
-def test_database_not_initicialized():
-    test_app = create_app({"TESTING": True})
+def test_database_not_initicialized(monkeypatch):
+    from tempfile import mkstemp
+    import os
 
-    with pytest.raises(DatabaseException, check= lambda e: type(e.original_error) == OperationalError) as info:
-        with test_app.app_context():
-            with get_session():
+    def fake_init():
+        print("Banco de dados 'iniciado' ;)")
 
-                print("Código qualquer")
+    monkeypatch.setattr("app.database.init_database", fake_init)
 
-    assert info.type is DatabaseException
-    assert "Banco de dados não inicializado!" in info.value.args[0]
+    db_fd, db_path = mkstemp()
+
+    test_app = create_app({"TESTING": True, "DATABASE": db_path})
+    
+    try:
+        with pytest.raises(DatabaseException, check= lambda e: type(e.original_error) == OperationalError) as info:
+            with test_app.app_context():
+                with get_session():
+                    print("Código qualquer")
+        
+        assert info.type is DatabaseException
+        assert "Banco de dados não inicializado!" in info.value.args[0]
+    finally:
+        os.close(db_fd)
+        os.unlink(db_path)
