@@ -32,7 +32,8 @@ def test_register(app, client):
     ("login_test", "             ", "", "Senha é necessária!" ),
     ("login_test", "s", "s", "A senha precisa ter pelo menos 4 caracters!"),
     ("login_test", "s                      ", "s", "A senha precisa ter pelo menos 4 caracters!"),
-    ("login_test", "senha", "outra_senha", "A senha não é igual à confirmação da senha!")
+    ("login_test", "senha", "outra_senha", "A senha não é igual à confirmação da senha!"),
+    ("teste", "1234", "1234", "Usuário já existe!")
 ))
 def test_fail_register(client, login, senha, confirmacao, menssagem):
     assert client.get("/auth/register").status_code == 200
