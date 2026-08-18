@@ -1,0 +1,25 @@
+{% extends 'base.html'%}
+
+{% block titulo %}Tarefas{% endblock %}
+
+{% block cabecalho %}
+    <nav>
+        <h2>Usuário: {{ login }}</h2>
+        <a href="{{url_for('auth.logout')}}">Log Out</a>
+    </nav>
+{% endblock %}
+
+{% block conteudo %}
+    <section>
+        <div class="topo-lista">
+            <div class="pesquisa">
+                <form method="post" class="pesquisa">
+                    <a href="">Criar Tarefa</a>
+                    <input type="text" placeholder="Digite o título da tarefa que deseja encontrar" id="procura">
+                    <button type="submit">Procurar</button>
+                </form>
+            </div>
+        </div>
+
+    </section>
+{% endblock %}
