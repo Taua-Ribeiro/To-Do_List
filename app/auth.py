@@ -80,6 +80,12 @@ def register():
         return render_template('auth/register.html', error= [e.message])
 
 
+@bp.route('/logout')
+def logout():
+    session.clear()
+
+    return redirect(url_for('auth.login'))
+
 @bp.route("/login", methods=["GET", "POST"])
 def login():
     error = []
@@ -104,6 +110,6 @@ def login():
 
 
         if len(error) == 0:
-            return "Login efetuado!"
+            return render_template('tarefas/index.html', login= login)
 
     return render_template('auth/login.html', error= error)
