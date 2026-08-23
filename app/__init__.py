@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_bootstrap import Bootstrap5
 import os
 
 def create_app(config_test= None):
@@ -10,6 +11,7 @@ def create_app(config_test= None):
 
     """
     app = Flask(__name__, instance_relative_config= True)
+    bootstrap = Bootstrap5(app)
 
     app.config.from_mapping(
         DATABASE = os.path.join(app.instance_path, "database.sqlite"),
