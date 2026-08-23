@@ -1,29 +1,23 @@
+{% from 'bootstrap5/form.html' import render_form %}
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="h-100">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{%block titulo %}{%endblock%}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename= 'style.css') }}">
+        {% block head %}
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>To-Do</title>
+            {% block style %}
+                {{ bootstrap.load_css() }}
+            {% endblock %}
+        {% endblock %}
     </head>
-    <body>
-        <header>
-            <h1>To-Do List</h1>
-            {%block cabecalho%}{%endblock%}
-        </header>
+    <body class="h-100">
+        {% block content %}
+        {% endblock %}
 
-        {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-        {% endfor %}
-
-        {% if error%}
-        <ul class="error-container">
-            {% for e in error%}
-                <li class="error">⛔ {{ e }}</li>
-            {% endfor %}
-        </ul>
-    {% endif%}
-
-        {% block conteudo %}{% endblock %}
+        {% block scripts %}
+            {{ bootstrap.load_js() }}
+        {% endblock %}
     </body>
 </html>

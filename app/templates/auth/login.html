@@ -1,26 +1,11 @@
 {% extends 'base.html' %}
 
-{% block titulo %}Login{% endblock %}
-
-{% block conteudo %}
-    <div class="login">
-        <form method="post">
-            <h2>Entrar</h2>
-
-            <label for="login">
-                <span>Login</span>
-            </label>
-
-            <input type="text" name="login" id="login" placeholder="Digite o nome do usuário" required>
-    
-            <label for="senha">
-                <span>Senha</span>
-                <input type="password" name="senha" id="senha" placeholder="Digite a senha" required>
-            </label>
-    
-            <button class="auth-button" type="submit">Log in</button>
-        </form>
-
-        <p>Não tem uma conta? <a href="{{ url_for('auth.register')}}">Se registre</a></p>
+{% block content %}
+    <div class="container-sm d-flex justify-content-center align-content-center">
+        <section class="text-bg-secondary p-2 rounded mt-5">
+            <h1>Login</h1>
+            <hr>
+            {{ render_form(form, method='post')}}
+        </section>
     </div>
 {% endblock %}
