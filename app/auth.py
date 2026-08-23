@@ -16,6 +16,7 @@ from werkzeug.security import check_password_hash
 from app.database import get_session
 from app.services.usuario_service import create_usuario, get_one_usuario
 from app.utils.app_exceptions import ServiceException
+from app.wtf.login_form import LoginForm
 
 from sqlalchemy import select
 
@@ -88,28 +89,9 @@ def logout():
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
-    error = []
+    form  = LoginForm()
 
-    if request.method == "POST":
-        login = request.form["login"].strip()
-        senha = request.form["senha"].strip()
-
-        if not login:
-            error.append("O login é necessário!")
-
-        if not senha:
-            error.append("A senha é necessária!")
-
-        try:
-            usuario = get_one_usuario(login)
-
-            if not check_password_hash(usuario.hash_senha, senha):
-                error.append("Login e/ou senha inválido(os)!")
-        except ServiceException as e:
-            error.append(e.message)
-
-
-        if len(error) == 0:
-            return render_template('tarefas/index.html', login= login)
-
-    return render_template('auth/login.html', error= error)
+    if form.validate_on_submit():
+        return redirect(url_for('tarefas/index.html'))
+    
+    return render_template('auth/login.html', form= form)
