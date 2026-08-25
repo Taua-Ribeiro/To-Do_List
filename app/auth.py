@@ -19,7 +19,7 @@ from app.utils.app_exceptions import ServiceException
 from app.wtf.login_form import LoginForm
 
 from sqlalchemy import select
-
+from sqlalchemy.exc import IntegrityError
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -92,6 +92,15 @@ def login():
     form  = LoginForm()
 
     if form.validate_on_submit():
-        return redirect(url_for('tarefas/index.html'))
+        try:
+            login_usuario = form.login.data
+            senha_usuario = form.senha.data
+
+            create_usuario(login_usuario, senha_usuario)
+
+            # Trocar para renderizar o template de registro
+            return render_template('auth/login.html')
+        except ServiceException as e:
+            flash(e.message, category='error')
     
     return render_template('auth/login.html', form= form)
