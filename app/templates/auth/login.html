@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container-sm d-flex justify-content-center align-content-center">
-        <section class="text-bg-secondary p-2 rounded mt-5">
+    <div class="container-sm d-flex flex-column justify-items-center align-items-center mt-5">
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+            {% if errors %}
+                <section class="text-bg-danger w-25">
+                    <ul>
+                            {% for messages in errors %}
+                                <p>{{messages}}</p>
+                            {% endfor %}
+                        </ul>
+                    </section>
+            {% endif %}
+        {% endwith %}
+        <section class="text-bg-secondary p-2 w-25 rounded mt-5  ">
             <h1>Login</h1>
             <hr>
             {{ render_form(form, method='post')}}
