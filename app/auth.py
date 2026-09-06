@@ -42,7 +42,7 @@ def carregar_usuario_logado():
 
             g.usuario = sess.scalars(stmt).one()
 
-@bp.route("/auth", methods=["GET", "POST"])
+@bp.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterForm()
 
@@ -69,7 +69,7 @@ def register():
 
             if not error:
                 flash("Usuário registrado com sucesso!", category="success")
-                return render_template('auth/login.html')
+                return redirect(url_for('auth.login'))
         except ServiceException as e:
             flash(e.message, category="error")
 
@@ -107,7 +107,7 @@ def login():
 
             if not error:
                 # Trocar para renderizar o index
-                return render_template('auth/login.html')
+                return redirect(url_for('auth.register'))
         except ServiceException as e:
             flash(e.message, category='error')
     
