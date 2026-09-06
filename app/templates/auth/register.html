@@ -1,36 +1,40 @@
 {% extends 'base.html' %}
 
-{% block titulo %}Registrar{% endblock %}
+{% block content %}
+   <div class="container-sm d-flex flex-column justify-items-center align-items-center mt-5">
+        {% with errors = get_flashed_messages(category_filter=["error"]) %}
+            {% if errors %}
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill"/>
+                    </svg>
 
-{% block conteudo %}
-    <!-- {% if error%}
-        <ul class="error-container">
-            {% for e in error%}
-                <li class="error">⛔ {{ e }}</li>
-            {% endfor %}
-        </ul>
-    {% endif%} -->
-    <div class="login">
-        <form method="post">
-            <h2>Registrar</h2>
-            
-            <label for="login">
-                <span>Login</span>
-            </label>
-            <input type="text" name="login" id="login" placeholder="Digite o nome do usuário" required>
-    
-            <label for="senha">
-                <span>Senha</span>
-            </label>
-            <input type="password" name="senha" id="senha" placeholder="Digite a senha" required>
+                    <div>
+                        {% for messages in errors %}
+                            {{messages}}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
 
-            <label for="confirmacao">
-                <span>Confirme a senha</span>
-            </label>
-            <input type="password" name="confirmacao" id="confirmacao" placeholder="Confirme a senha" required>
-    
-            <button class="auth-button" type="submit">Registrar</button>
-        </form>
+        {% with success = get_flashed_messages(category_filter=["success"]) %}
+            {% if success %}
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                        <use xlink:href="#check-circle-fill"/>
+                    </svg>
+                    <div>
+                        {{success[0]}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
 
-    </div>
+        <section class="text-bg-secondary p-2 w-25 rounded mt-5">
+            <h1>Register</h1>
+            <hr>
+            {{ render_form(form, method="post")}}
+        </section>
+   </div>
 {% endblock %}

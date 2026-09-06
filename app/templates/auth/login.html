@@ -4,15 +4,33 @@
     <div class="container-sm d-flex flex-column justify-items-center align-items-center mt-5">
         {% with errors = get_flashed_messages(category_filter=["error"]) %}
             {% if errors %}
-                <section class="text-bg-danger w-25">
-                    <ul>
-                            {% for messages in errors %}
-                                <p>{{messages}}</p>
-                            {% endfor %}
-                        </ul>
-                    </section>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill"/>
+                    </svg>
+
+                    <div>
+                        {% for messages in errors %}
+                            {{messages}}
+                        {% endfor %}
+                    </div>
+                </div>
             {% endif %}
         {% endwith %}
+
+        {% with success = get_flashed_messages(category_filter=["success"]) %}
+            {% if success %}
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                        <use xlink:href="#check-circle-fill"/>
+                    </svg>
+                    <div>
+                        {{success[0]}}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <section class="text-bg-secondary p-2 w-25 rounded mt-5  ">
             <h1>Login</h1>
             <hr>
